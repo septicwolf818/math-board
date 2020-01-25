@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math board</title>
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+    }
+
+    canvas {
+      box-sizing: border-box;
+      cursor: crosshair;
+      touch-action: none;
+    }
+
+    #controls {
+      position: absolute;
+      bottom: 0;
+      height: 148px;
+      border: 1px solid #515151;
+      width: calc(100% - 2px);
+      background-color: #F1F1F1;
+      user-select: none;
+    }
+
+    button {
+      border: none;
+      border-radius: 5px;
+      font-size: 1.5em;
+      background-color: khaki;
+      padding: 10px;
+      margin: 10px;
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    .clear {
+      color: white;
+      background-color: red;
+    }
+
+    .active {
+      background-color: rgb(223, 255, 174);
+      border: 1px solid black;
+    }
+
+    #constrols,
+    #tools,
+    #state {
+      float: left;
+    }
+
+
+    #tools button {
+      width: 128px;
+      height: 128px;
+      line-height: 110px;
+    }
+
+    #state {
+      margin: 10px;
+    }
+  </style>
+  <script src="p5.js"></script>
+  <script src="addons/p5.sound.js"></script>
+  <script src="sketch.js"></script>
+  <div id="controls">
+
+    <div id="tools">
+      <button onclick="clearCanvas()" class="clear">&times;</button>
+      <button onclick="changeMode('draw', 0)" class="mode active">&#9998;</button>
+      <button onclick="changeMode('line', 1)" class="mode">\</button>
+      <button onclick="changeMode('square', 2)" class="mode">&#9633;</button>
+      <button onclick="changeMode('circle', 3)" class="mode">&#9675;</button>
+    </div>
+  </div>
+</head>
+
+<body>
+</body>
+
+</html>
