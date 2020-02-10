@@ -55,10 +55,34 @@
     }
 
 
+    .color {
+      width: 128px;
+      height: 128px;
+      margin: 11px;
+      line-height: 110px;
+      display: block;
+      float: left;
+
+    }
+
+    .colorpack {
+      display: unset;
+      display: inline;
+
+    }
+
+    .coloractive {
+      border: 1px dashed black;
+    }
+
     #tools button {
       width: 128px;
       height: 128px;
       line-height: 110px;
+    }
+
+    #tools {
+      width: 50%;
     }
 
     #state {
@@ -76,6 +100,20 @@
       <button onclick="changeMode('line', 1)" class="mode">\</button>
       <button onclick="changeMode('square', 2)" class="mode">&#9633;</button>
       <button onclick="changeMode('circle', 3)" class="mode">&#9675;</button>
+    </div>
+    <div id="colors">
+      <div class="colorpack">
+        <button class="color coloractive" style="background-color: black;" data-color="black"
+          onclick="changeColor(this)">&nbsp;</button>
+        <button class="color " style="background-color: red;" data-color="red"
+          onclick="changeColor(this)">&nbsp;</button>
+      </div>
+      <div class="colorpack">
+        <button class="color" style="background-color: green;" data-color="green"
+          onclick="changeColor(this)">&nbsp;</button>
+        <button class="color" style="background-color: blue;" data-color="blue"
+          onclick="changeColor(this)">&nbsp;</button>
+      </div>
     </div>
   </div>
 </head>

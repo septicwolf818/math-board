@@ -131,3 +131,21 @@ function changeMode(mode, index) {
   modes[index].classList.add("active");
   console.log("New mode selected: " + MODE);
 }
+
+function changeColor(obj) {
+  var color = obj.dataset.color;
+  switch (color) {
+    case "black":
+      stroke(0);
+      break;
+    case "red":
+      stroke(255, 0, 0);
+      break;
+    case "green":
+      stroke(0, 255, 0);
+      break;
+    case "blue":
+      stroke(0, 0, 255);
+      break;
+  }
+}
