@@ -8,7 +8,6 @@ var point2 = [-1, -1];
 
 function setup() {
   createCanvas(windowWidth, windowHeight - 150);
-  background(255, 254, 242);
   stroke(0);
   strokeWeight(2);
 }
@@ -44,7 +43,6 @@ function mouseMoved() {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight - 150);
-  background(255, 254, 242);
 
 }
 
@@ -52,6 +50,11 @@ function touchStarted() {
   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
     if (MODE == "draw") {
       isDrawing = true;
+      point(mouseX, mouseY);
+      if (lastX == -1 || lastY == -1) {
+        lastX = mouseX;
+        lastY = mouseY;
+      }
       console.log("User is drawing!");
     }
   }
@@ -61,6 +64,11 @@ function mousePressed() {
   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
     if (MODE == "draw") {
       isDrawing = true;
+      point(mouseX, mouseY);
+      if (lastX == -1 || lastY == -1) {
+        lastX = mouseX;
+        lastY = mouseY;
+      }
       console.log("User is drawing!");
     }
   }
@@ -133,7 +141,15 @@ function changeMode(mode, index) {
 }
 
 function changeColor(obj) {
+  var colors = document.getElementsByClassName("color");
   var color = obj.dataset.color;
+  for (var i = 0; i < colors.length; i++) {
+    colors[i].classList.remove("coloractive");
+  }
+
+  obj.classList.add("coloractive")
+  strokeWeight(3)
+
   switch (color) {
     case "black":
       stroke(0);
@@ -146,6 +162,10 @@ function changeColor(obj) {
       break;
     case "blue":
       stroke(0, 0, 255);
+      break;
+    case "white":
+      strokeWeight(30)
+      stroke(255, 255, 255);
       break;
   }
 }

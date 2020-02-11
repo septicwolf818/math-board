@@ -9,6 +9,7 @@
     body {
       padding: 0;
       margin: 0;
+      overflow: hidden;
     }
 
     canvas {
@@ -20,7 +21,7 @@
     #controls {
       position: absolute;
       bottom: 0;
-      height: 148px;
+      height: 70px;
       border: 1px solid #515151;
       width: calc(100% - 2px);
       background-color: #F1F1F1;
@@ -32,7 +33,6 @@
       border-radius: 5px;
       font-size: 1.5em;
       background-color: khaki;
-      padding: 10px;
       margin: 10px;
       box-sizing: border-box;
       outline: none;
@@ -56,8 +56,8 @@
 
 
     .color {
-      width: 128px;
-      height: 128px;
+      width: 50px;
+      height: 50px;
       margin: 11px;
       line-height: 110px;
       display: block;
@@ -72,21 +72,24 @@
     }
 
     .coloractive {
-      border: 1px dashed black;
+      border: 3px dashed black;
     }
 
     #tools button {
-      width: 128px;
-      height: 128px;
-      line-height: 110px;
+      width: 50px;
+      height: 50px;
+      line-height: 40px;
     }
 
     #tools {
       width: 50%;
     }
 
-    #state {
+    #author {
       margin: 10px;
+      text-align: right;
+      font-family: monospace;
+      font-size: 10px;
     }
   </style>
   <script src="p5.js"></script>
@@ -114,7 +117,12 @@
         <button class="color" style="background-color: blue;" data-color="blue"
           onclick="changeColor(this)">&nbsp;</button>
       </div>
+      <div class="colorpack">
+        <button class="color" style="background-color: rgb(226, 226, 226);" data-color="white"
+          onclick="changeColor(this)">&nbsp;</button>
+      </div>
     </div>
+    <div id="author">Author: Rafał Widło</div>
   </div>
 </head>
 
