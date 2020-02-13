@@ -9,7 +9,7 @@ var point2 = [-1, -1];
 function setup() {
   createCanvas(windowWidth, windowHeight - 70);
   stroke(0);
-  strokeWeight(2);
+  strokeWeight(3);
 }
 
 
