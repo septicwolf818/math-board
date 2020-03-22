@@ -13,6 +13,9 @@
     }
 
     canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
       box-sizing: border-box;
       cursor: crosshair;
       touch-action: none;
@@ -98,7 +101,7 @@
   <div id="controls">
 
     <div id="tools">
-      <button onclick="clearCanvas()" class="clear">&times;</button>
+      <button onclick="cnvs1.clearCanvas()" class="clear">&times;</button>
       <button onclick="changeMode('draw', 0)" class="mode active">&#9998;</button>
       <button onclick="changeMode('line', 1)" class="mode">\</button>
       <button onclick="changeMode('square', 2)" class="mode">&#9633;</button>

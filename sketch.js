@@ -6,127 +6,128 @@ var selectingPoint = 1;
 var point1 = [-1, -1];
 var point2 = [-1, -1];
 
-function setup() {
-  createCanvas(windowWidth, windowHeight - 70);
-  stroke(0);
-  strokeWeight(3);
-}
+const first = (sketch) => {
 
-
-function touchMoved() {
-  if (isDrawing) {
-    if (lastX == -1 || lastY == -1) {
-      lastX = mouseX;
-      lastY = mouseY;
-    }
-    if (lastX != mouseX || lastY != mouseY) {
-      line(lastX, lastY, mouseX, mouseY);
-      lastX = mouseX;
-      lastY = mouseY;
-    }
+  sketch.setup = function () {
+    sketch.createCanvas(sketch.windowWidth, sketch.windowHeight - 70);
+    sketch.stroke(0);
+    sketch.strokeWeight(3);
   }
-}
 
-function mouseMoved() {
-  if (isDrawing) {
-    if (lastX == -1 || lastY == -1) {
-      lastX = mouseX;
-      lastY = mouseY;
-    }
-    if (lastX != mouseX || lastY != mouseY) {
-      line(lastX, lastY, mouseX, mouseY);
-      lastX = mouseX;
-      lastY = mouseY;
-    }
-  }
-}
 
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight - 150);
 
-}
 
-function touchStarted() {
-  if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
-    if (MODE == "draw") {
-      isDrawing = true;
-      point(mouseX, mouseY);
+  sketch.touchMoved = function () {
+    if (isDrawing) {
       if (lastX == -1 || lastY == -1) {
-        lastX = mouseX;
-        lastY = mouseY;
+        lastX = sketch.mouseX;
+        lastY = sketch.mouseY;
       }
-      console.log("User is drawing!");
+      if (lastX != sketch.mouseX || lastY != sketch.mouseY) {
+        sketch.line(lastX, lastY, sketch.mouseX, sketch.mouseY);
+        lastX = sketch.mouseX;
+        lastY = sketch.mouseY;
+      }
     }
   }
-}
 
-function mousePressed() {
-  if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
-    if (MODE == "draw") {
-      isDrawing = true;
-      point(mouseX, mouseY);
+  sketch.mouseMoved = function () {
+    if (isDrawing) {
       if (lastX == -1 || lastY == -1) {
-        lastX = mouseX;
-        lastY = mouseY;
+        lastX = sketch.mouseX;
+        lastY = sketch.mouseY;
       }
-      console.log("User is drawing!");
+      if (lastX != sketch.mouseX || lastY != sketch.mouseY) {
+        line(lastX, lastY, sketch.mouseX, sketch.mouseY);
+        lastX = sketch.mouseX;
+        lastY = sketch.mouseY;
+      }
     }
   }
-}
 
-function touchEnded() {
-  if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
-    if (MODE == "draw") {
-      isDrawing = false;
-      console.log("User stopped drawing!");
-      lastX = -1;
-      lastY = -1;
-    }
-  }
-}
-
-function mouseReleased() {
-  if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
-    if (MODE == "draw") {
-      isDrawing = false;
-      console.log("User stopped drawing!");
-      lastX = -1;
-      lastY = -1;
-    }
-  }
-}
-
-function mouseClicked() {
-  if ((mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height)) {
-    if (MODE != "draw") {
-      if (selectingPoint == 1) {
-        point1 = [mouseX, mouseY];
-        selectingPoint++;
-      } else if (selectingPoint == 2) {
-        point2 = [mouseX, mouseY];
-        switch (MODE) {
-          case "line":
-            line(point1[0], point1[1], point2[0], point2[1]);
-            break;
-          case "square":
-            rectMode(CORNERS);
-            noFill();
-            rect(point1[0], point1[1], point2[0], point2[1]);
-            break;
-          case "circle":
-            ellipseMode(CORNERS);
-            ellipse(point1[0], point1[1], point2[0], point2[1]);
-            break;
+  sketch.touchStarted = function () {
+    if (sketch.mouseX > 0 && sketch.mouseX < sketch.width && sketch.mouseY > 0 && sketch.mouseY < sketch.height) {
+      if (MODE == "draw") {
+        isDrawing = true;
+        sketch.point(sketch.mouseX, sketch.mouseY);
+        if (lastX == -1 || lastY == -1) {
+          lastX = sketch.mouseX;
+          lastY = sketch.mouseY;
         }
-        selectingPoint = 1;
+        console.log("User is drawing!");
       }
     }
   }
-}
 
-function clearCanvas() {
-  clear();
-  console.log("Canvas cleared!");
+  sketch.mousePressed = function () {
+    if (sketch.mouseX > 0 && sketch.mouseX < sketch.width && sketch.mouseY > 0 && sketch.mouseY < sketch.height) {
+      if (MODE == "draw") {
+        isDrawing = true;
+        sketch.point(sketch.mouseX, sketch.mouseY);
+        if (lastX == -1 || lastY == -1) {
+          lastX = sketch.mouseX;
+          lastY = sketch.mouseY;
+        }
+        console.log("User is drawing!");
+      }
+    }
+  }
+
+  sketch.touchEnded = function () {
+    if (sketch.mouseX > 0 && sketch.mouseX < sketch.width && sketch.mouseY > 0 && sketch.mouseY < sketch.height) {
+      if (MODE == "draw") {
+        isDrawing = false;
+        console.log("User stopped drawing!");
+        lastX = -1;
+        lastY = -1;
+      }
+    }
+  }
+
+  sketch.mouseReleased = function () {
+    if (sketch.mouseX > 0 && sketch.mouseX < sketch.width && sketch.mouseY > 0 && sketch.mouseY < sketch.height) {
+      if (MODE == "draw") {
+        isDrawing = false;
+        console.log("User stopped drawing!");
+        lastX = -1;
+        lastY = -1;
+      }
+    }
+  }
+
+  sketch.mouseClicked = function () {
+    if ((sketch.mouseX > 0 && sketch.mouseX < sketch.width && sketch.mouseY > 0 && sketch.mouseY < sketch.height)) {
+      if (MODE != "draw") {
+        if (selectingPoint == 1) {
+          point1 = [sketch.mouseX, sketch.mouseY];
+          selectingPoint++;
+        } else if (selectingPoint == 2) {
+          point2 = [sketch.mouseX, sketch.mouseY];
+          switch (MODE) {
+            case "line":
+              sketch.line(point1[0], point1[1], point2[0], point2[1]);
+              break;
+            case "square":
+              sketch.rectMode(sketch.CORNERS);
+              sketch.noFill();
+              sketch.rect(point1[0], point1[1], point2[0], point2[1]);
+              break;
+            case "circle":
+              sketch.ellipseMode(sketch.CORNERS);
+              sketch.ellipse(point1[0], point1[1], point2[0], point2[1]);
+              break;
+          }
+          selectingPoint = 1;
+        }
+      }
+    }
+  }
+
+  sketch.clearCanvas = function () {
+    sketch.clear();
+    console.log("Canvas cleared!");
+  }
+
 }
 
 function changeMode(mode, index) {
@@ -140,6 +141,48 @@ function changeMode(mode, index) {
   console.log("New mode selected: " + MODE);
 }
 
+
+const second = (sketch) => {
+
+  sketch.setup = function () {
+    sketch.createCanvas(sketch.windowWidth, sketch.windowHeight - 70);
+    sketch.stroke("rgba(0,0,0,.4)");
+    sketch.noFill();
+    sketch.strokeWeight(3);
+  }
+
+
+  sketch.draw = function () {
+    var clear = true;
+    if (selectingPoint == 2) {
+      clear = true;
+      sketch.clear()
+      switch (MODE) {
+        case "line":
+          sketch.line(point1[0], point1[1], sketch.mouseX, sketch.mouseY);
+          break;
+        case "square":
+          sketch.rectMode(sketch.CORNERS);
+          sketch.noFill();
+          sketch.rect(point1[0], point1[1], sketch.mouseX, sketch.mouseY);
+          break;
+        case "circle":
+          sketch.ellipseMode(sketch.CORNERS);
+          sketch.ellipse(point1[0], point1[1], sketch.mouseX, sketch.mouseY);
+          break;
+      }
+    } else {
+      if (clear) {
+        sketch.clear();
+        clear = false;
+      }
+    }
+  }
+}
+
+cnvs1 = new p5(first);
+cnvs2 = new p5(second);
+
 function changeColor(obj) {
   var colors = document.getElementsByClassName("color");
   var color = obj.dataset.color;
@@ -148,24 +191,24 @@ function changeColor(obj) {
   }
 
   obj.classList.add("coloractive")
-  strokeWeight(3)
+  cnvs1.strokeWeight(3)
 
   switch (color) {
     case "black":
-      stroke(0);
+      cnvs1.stroke(0);
       break;
     case "red":
-      stroke(255, 0, 0);
+      cnvs1.stroke(255, 0, 0);
       break;
     case "green":
-      stroke(0, 255, 0);
+      cnvs1.stroke(0, 255, 0);
       break;
     case "blue":
-      stroke(0, 0, 255);
+      cnvs1.stroke(0, 0, 255);
       break;
     case "white":
-      strokeWeight(30)
-      stroke(255, 255, 255);
+      cnvs1.strokeWeight(30);
+      cnvs1.stroke(255, 255, 255);
       break;
   }
 }
