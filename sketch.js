@@ -10,6 +10,7 @@ const first = (sketch) => {
     sketch.createCanvas(sketch.windowWidth, sketch.windowHeight - 70);
     sketch.stroke(0);
     sketch.strokeWeight(3);
+    sketch.background(255);
   }
   sketch.touchMoved = function () {
     if (isDrawing) {
@@ -113,6 +114,7 @@ const first = (sketch) => {
   }
   sketch.clearCanvas = function () {
     sketch.clear();
+    sketch.background(255);
     console.log("Canvas cleared!");
   }
 }
