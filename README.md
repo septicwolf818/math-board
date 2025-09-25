@@ -2,7 +2,7 @@
 
 A modern, feature-rich digital whiteboard designed specifically for mathematical education and drawing. Built with the latest web technologies and enhanced with 2025 standards.
 
-![Math Board Preview](https://user-images.githubusercontent.com/34957083/92579962-22b84180-f28e-11ea-812f-faa4d0e9e3d5.png)
+![Math Board Preview](./math-board-ui.png)
 
 ## ✨ Features
 
