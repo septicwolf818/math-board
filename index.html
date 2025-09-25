@@ -4,132 +4,590 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Math board</title>
-  <style>
+  <meta name="description" content="Digital math board for drawings, calculations, and educational purposes">
+  <meta name="keywords" content="math, drawing, board, education, whiteboard, digital">
+  <meta name="author" content="Rafał Widło">
+  <meta name="theme-color" content="#F1F1F1">
+  <title>Math Board | Digital Drawing and Math Tool</title>
+   <style>
+    :root {
+      --primary-bg: #f8f9fa;
+      --border-color: #dee2e6;
+      --border-color-rgb: 222, 226, 230;
+      --active-color: #19c61c;
+      --clear-color: #dc3545;
+      --canvas-bg: #ffffff;
+      --text-color: #212529;
+      --text-color-rgb: 33, 37, 41;
+      --button-bg: #ffffff;
+      --shadow: rgba(0, 0, 0, 0.15);
+      
+      /* Static sizing */
+      --toolbar-height: 170px;
+      --btn-base-width: 48px;
+      --btn-base-height: 48px;
+      --btn-border-radius: 8px;
+      --btn-font-size: 0.7rem;
+      --icon-size: 1.1rem;
+      --gap-small: 6px;
+      --gap-medium: 8px;
+      --gap-large: 10px;
+      --color-btn-size: 38px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --primary-bg: #212529;
+        --border-color: #495057;
+        --border-color-rgb: 73, 80, 87;
+        --active-color: #17b109;
+        --clear-color: #dc3545;
+        --canvas-bg: #343a40;
+        --text-color: #f8f9fa;
+        --text-color-rgb: 248, 249, 250;
+        --button-bg: #495057;
+        --shadow: rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       padding: 0;
       margin: 0;
       overflow: hidden;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--canvas-bg);
+      color: var(--text-color);
     }
 
-    canvas {
+    main {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 100vh;
+    }
+
+    #drawing-canvas {
       position: absolute;
       top: 0;
       left: 0;
-      box-sizing: border-box;
+      right: 0;
+      bottom: var(--toolbar-height);
       cursor: crosshair;
       touch-action: none;
+      background: var(--canvas-bg);
     }
 
     #controls {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--primary-bg);
+      border-top: 2px solid var(--border-color);
+      user-select: none;
+      box-shadow: 0 -4px 12px var(--shadow);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      height: var(--toolbar-height);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding: var(--gap-small) 0;
+    }
+
+    /* Screen reader only content */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Toolbar Sections */
+    .toolbar-section {
+      display: flex;
+      align-items: center;
+      padding: 0 var(--gap-large);
+      gap: var(--gap-medium);
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
+    }
+
+    /* Webkit scrollbar - overlay style that doesn't affect layout */
+    .toolbar-section::-webkit-scrollbar {
+      height: 4px;
+      width: 4px;
+      position: absolute;
+    }
+
+    .toolbar-section::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .toolbar-section::-webkit-scrollbar-thumb {
+      background: rgba(var(--border-color-rgb), 0.3);
+      border-radius: 2px;
+      transition: all 0.2s ease;
+      position: absolute;
+    }
+
+    .toolbar-section::-webkit-scrollbar-thumb:hover {
+      background: rgba(var(--text-color-rgb), 0.6);
+    }
+
+    .toolbar-section::-webkit-scrollbar-corner {
+      background: transparent;
+    }
+
+    /* Firefox scrollbar - overlay style */
+    .toolbar-section {
+      scrollbar-width: none; /* Hide default scrollbar */
+      scrollbar-color: transparent transparent;
+    }
+
+    /* Custom overlay scrollbar for Firefox */
+    .toolbar-section::after {
+      content: '';
       position: absolute;
       bottom: 0;
-      height: 70px;
-      border: 1px solid #515151;
-      width: calc(100% - 2px);
-      background-color: #F1F1F1;
-      user-select: none;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: transparent;
+      pointer-events: none;
+      z-index: 10;
     }
 
-    button {
+    .primary-toolbar {
+      flex: 1;
+      min-height: 66px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--gap-medium);
+      padding: var(--gap-small) var(--gap-large);
+      flex-wrap: nowrap;
+    }
+
+    .color-toolbar {
+      flex: 0 0 52px;
+      min-height: 48px;
+      padding: var(--gap-small) var(--gap-large);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--gap-small);
+      flex-wrap: nowrap;
+    }
+
+    /* Toolbar Groups */
+    .toolbar-group {
+      display: flex;
+      align-items: center;
+      gap: var(--gap-medium);
+      flex-shrink: 0;
+    }
+
+    .tools-group {
+      flex: 1;
+      justify-content: flex-start;
+    }
+
+    .size-group {
+      flex: 0 0 auto;
+    }
+
+    .actions-group,
+    .utility-group {
+      flex: 0 0 auto;
+    }
+
+    /* Fieldsets for grouping */
+    fieldset {
       border: none;
-      border-radius: 5px;
-      font-size: 1.5em;
-      background-color: khaki;
-      margin: 10px;
-      box-sizing: border-box;
-      outline: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: var(--gap-medium);
     }
 
-    .clear {
+    .tool-group {
+      gap: var(--gap-medium);
+    }
+
+    .color-group {
+      gap: var(--gap-small);
+    }
+
+    .action-group,
+    .utility-group {
+      gap: var(--gap-small);
+    }
+
+    .toolbar-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--gap-small) var(--gap-large);
+      background: rgba(0, 0, 0, 0.05);
+      font-size: var(--btn-font-size);
+      line-height: 15px;
+      color: var(--text-color);
+      opacity: 0.8;
+      flex: 0 0 15px;
+      min-height: 15px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .tool-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: var(--btn-base-width);
+      height: var(--btn-base-height);
+      background: var(--button-bg);
+      border: 2px solid transparent;
+      border-radius: var(--btn-border-radius);
+      padding: var(--gap-small);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 4px var(--shadow);
+    }
+
+    .tool-btn:hover {
+      background: var(--button-bg);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px var(--shadow);
+      border-color: var(--active-color);
+    }
+
+    .tool-btn.active {
+      background: var(--active-color);
       color: white;
-      background-color: red;
+      border-color: var(--active-color);
+      box-shadow: 0 2px 8px var(--shadow);
     }
 
-    .active {
-      background-color: rgb(223, 255, 174);
-      border: 1px solid black;
+    .tool-icon {
+      font-size: var(--icon-size);
+      line-height: 1;
+      margin-bottom: calc(var(--gap-small) / 2);
     }
 
-    #constrols,
-    #tools,
-    #state {
-      float: left;
+    .tool-label {
+      font-size: var(--btn-font-size);
+      font-weight: 500;
+      color: inherit;
+      opacity: 0.9;
+      white-space: nowrap;
+      text-align: center;
     }
 
-
-    .color {
-      width: 50px;
-      height: 50px;
-      margin: 11px;
-      line-height: 110px;
-      display: block;
-      float: left;
-
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: var(--btn-base-width);
+      height: var(--btn-base-height);
+      background: var(--button-bg);
+      border: 2px solid transparent;
+      border-radius: var(--btn-border-radius);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 4px var(--shadow);
+      font-size: var(--icon-size);
     }
 
-    .colorpack {
-      display: unset;
-      display: inline;
-
+    .action-btn:hover {
+      background: var(--button-bg);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px var(--shadow);
+      border-color: var(--active-color);
     }
 
-    .coloractive {
-      border: 3px dashed black;
+    .action-btn.secondary {
+      background: #6c757d;
+      color: white;
+      min-width: calc(var(--btn-base-width) * 0.9);
+      height: calc(var(--btn-base-height) * 0.9);
     }
 
-    #tools button {
-      width: 50px;
-      height: 50px;
-      line-height: 40px;
+    .action-btn.secondary:hover {
+      background: #5a6268;
+      box-shadow: 0 2px 8px var(--shadow);
     }
 
-    #tools {
-      width: 50%;
+    .clear-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: var(--btn-base-width);
+      height: var(--btn-base-height);
+      background: var(--clear-color);
+      color: white;
+      border: none;
+      border-radius: var(--btn-border-radius);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 4px rgba(220, 53, 69, 0.3);
+      font-weight: 600;
+      font-size: var(--icon-size);
     }
 
-    #author {
-      margin: 10px;
-      text-align: right;
+    .clear-btn:hover {
+      background: #c82333;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+    }
+
+    /* Size Control */
+    .size-control {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: calc(var(--btn-base-width) * 1.5);
+      height: var(--btn-base-height);
+      background: var(--button-bg);
+      border-radius: var(--btn-border-radius);
+      padding: var(--gap-small);
+      box-shadow: 0 1px 4px var(--shadow);
+      border: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .size-control:hover {
+      border-color: var(--active-color);
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+
+    #brush-size {
+      width: calc(100% - var(--gap-small));
+      margin-bottom: calc(var(--gap-small) / 2);
+      accent-color: var(--active-color);
+    }
+
+    #size-display {
+      font-size: var(--btn-font-size);
+      font-weight: 500;
+      color: var(--text-color);
+    }
+
+    .app-info, .author-info {
+      display: flex;
+      align-items: center;
+    }
+
+    .app-title {
+      font-weight: 600;
+    }
+
+    .author-credit {
       font-family: monospace;
-      font-size: 10px;
+    }
+
+    .color-btn {
+      width: var(--color-btn-size);
+      height: var(--color-btn-size);
+      border: 2px solid var(--button-bg);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 4px var(--shadow);
+    }
+
+    .color-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+
+    .color-btn.active {
+      border-color: var(--active-color);
+      border-width: 3px;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+
+    .custom-color-wrapper {
+      position: relative;
+      width: var(--color-btn-size);
+      height: var(--color-btn-size);
+    }
+
+    #custom-color-picker {
+      width: 100%;
+      height: 100%;
+      border: 2px solid var(--button-bg);
+      border-radius: 50%;
+      cursor: pointer;
+      background: none;
+      padding: 0;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 4px var(--shadow);
+    }
+
+    #custom-color-picker:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+
+    #custom-color-picker::-webkit-color-swatch-wrapper {
+      padding: 2px;
+      border-radius: 50%;
+    }
+
+    #custom-color-picker::-webkit-color-swatch {
+      border: none;
+      border-radius: 50%;
+    }
+
+    #custom-color-picker::-moz-color-swatch {
+      border: none;
+      border-radius: 50%;
+    }
+
+    .custom-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: var(--btn-font-size);
+      font-weight: bold;
+      color: var(--text-color);
+      pointer-events: none;
+      z-index: 1;
     }
   </style>
   <script src="p5.js"></script>
-  <script src="addons/p5.sound.js"></script>
   <script src="sketch.js"></script>
-  <div id="controls">
-
-    <div id="tools">
-      <button onclick="cnvs1.clearCanvas()" class="clear">&times;</button>
-      <button onclick="changeMode('draw', 0)" class="mode active">&#9998;</button>
-      <button onclick="changeMode('line', 1)" class="mode">\</button>
-      <button onclick="changeMode('square', 2)" class="mode">&#9633;</button>
-      <button onclick="changeMode('circle', 3)" class="mode">&#9675;</button>
-    </div>
-    <div id="colors">
-      <div class="colorpack">
-        <button class="color coloractive" style="background-color: black;" data-color="black"
-          onclick="changeColor(this)">&nbsp;</button>
-        <button class="color " style="background-color: red;" data-color="red"
-          onclick="changeColor(this)">&nbsp;</button>
-      </div>
-      <div class="colorpack">
-        <button class="color" style="background-color: green;" data-color="green"
-          onclick="changeColor(this)">&nbsp;</button>
-        <button class="color" style="background-color: blue;" data-color="blue"
-          onclick="changeColor(this)">&nbsp;</button>
-      </div>
-      <div class="colorpack">
-        <button class="color" style="background-color: rgb(226, 226, 226);" data-color="white"
-          onclick="changeColor(this)">&nbsp;</button>
-      </div>
-    </div>
-    <div id="author">Author: Rafał Widło</div>
-  </div>
 </head>
 
 <body>
+  <main>
+    <div id="drawing-canvas" role="img" aria-label="Drawing canvas area"></div>
+    
+    <nav id="controls" role="toolbar" aria-label="Drawing tools and controls">
+      <!-- Primary Tools Section -->
+      <section class="toolbar-section primary-toolbar" aria-label="Drawing tools">
+        <div class="toolbar-group tools-group">
+          <fieldset class="tool-group">
+            <legend class="sr-only">Drawing Tools</legend>
+            <button onclick="mathBoard.changeMode('draw', 0)" class="tool-btn active" data-mode="draw" aria-label="Draw freely" title="Draw freely (D)">
+              <span class="tool-icon" aria-hidden="true">✏️</span>
+              <span class="tool-label">Draw</span>
+            </button>
+            <button onclick="mathBoard.changeMode('eraser', 1)" class="tool-btn" data-mode="eraser" aria-label="Eraser tool" title="Eraser tool (E)">
+              <span class="tool-icon" aria-hidden="true">🧽</span>
+              <span class="tool-label">Eraser</span>
+            </button>
+            <button onclick="mathBoard.changeMode('line', 2)" class="tool-btn" data-mode="line" aria-label="Draw lines" title="Draw lines (L)">
+              <span class="tool-icon" aria-hidden="true">📏</span>
+              <span class="tool-label">Line</span>
+            </button>
+            <button onclick="mathBoard.changeMode('rectangle', 3)" class="tool-btn" data-mode="rectangle" aria-label="Draw rectangles" title="Draw rectangles (R)">
+              <span class="tool-icon" aria-hidden="true">⬜</span>
+              <span class="tool-label">Rect</span>
+            </button>
+            <button onclick="mathBoard.changeMode('circle', 4)" class="tool-btn" data-mode="circle" aria-label="Draw circles" title="Draw circles (C)">
+              <span class="tool-icon" aria-hidden="true">⭕</span>
+              <span class="tool-label">Circle</span>
+            </button>
+          </fieldset>
+        </div>
+        
+        <div class="toolbar-group size-group">
+          <div class="size-control" role="group" aria-label="Brush size">
+            <label for="brush-size" class="sr-only">Brush size</label>
+            <input type="range" id="brush-size" min="1" max="20" value="3" aria-label="Brush size">
+            <output id="size-display" for="brush-size" aria-live="polite">3px</output>
+          </div>
+        </div>
+        
+        <div class="toolbar-group actions-group">
+          <fieldset class="action-group">
+            <legend class="sr-only">Actions</legend>
+            <button onclick="mathBoard.undo()" class="action-btn" aria-label="Undo last action" title="Undo (Ctrl+Z)">
+              <span class="tool-icon" aria-hidden="true">↶</span>
+              <span class="sr-only">Undo</span>
+            </button>
+            <button onclick="mathBoard.redo()" class="action-btn" aria-label="Redo last action" title="Redo (Ctrl+Y)">
+              <span class="tool-icon" aria-hidden="true">↷</span>
+              <span class="sr-only">Redo</span>
+            </button>
+            <button class="clear-btn" onclick="mathBoard.clearCanvas()" aria-label="Clear entire canvas" title="Clear canvas (Ctrl+C)">
+              <span class="tool-icon" aria-hidden="true">🗑️</span>
+              <span class="sr-only">Clear</span>
+            </button>
+          </fieldset>
+        </div>
+      </section>
+      
+      <!-- Color Palette Section -->
+      <section class="toolbar-section color-toolbar" aria-label="Color palette">
+        <div class="toolbar-group colors-group">
+          <fieldset class="color-group">
+            <legend class="sr-only">Color Selection</legend>
+            <button class="color-btn active" style="background-color: #000000;" data-color="#000000" onclick="mathBoard.changeColor(this)" aria-label="Black color" title="Black"></button>
+            <button class="color-btn" style="background-color: #FF0000;" data-color="#FF0000" onclick="mathBoard.changeColor(this)" aria-label="Red color" title="Red"></button>
+            <button class="color-btn" style="background-color: #00AA00;" data-color="#00AA00" onclick="mathBoard.changeColor(this)" aria-label="Green color" title="Green"></button>
+            <button class="color-btn" style="background-color: #0066FF;" data-color="#0066FF" onclick="mathBoard.changeColor(this)" aria-label="Blue color" title="Blue"></button>
+            <button class="color-btn" style="background-color: #FFD700;" data-color="#FFD700" onclick="mathBoard.changeColor(this)" aria-label="Yellow color" title="Yellow"></button>
+            <button class="color-btn" style="background-color: #FF6B35;" data-color="#FF6B35" onclick="mathBoard.changeColor(this)" aria-label="Orange color" title="Orange"></button>
+            <button class="color-btn" style="background-color: #8E44AD;" data-color="#8E44AD" onclick="mathBoard.changeColor(this)" aria-label="Purple color" title="Purple"></button>
+            <button class="color-btn" style="background-color: #E91E63;" data-color="#E91E63" onclick="mathBoard.changeColor(this)" aria-label="Pink color" title="Pink"></button>
+            <button class="color-btn" style="background-color: #795548;" data-color="#795548" onclick="mathBoard.changeColor(this)" aria-label="Brown color" title="Brown"></button>
+            <button class="color-btn" style="background-color: #607D8B;" data-color="#607D8B" onclick="mathBoard.changeColor(this)" aria-label="Gray color" title="Gray"></button>
+            
+            <div class="custom-color-wrapper">
+              <label for="custom-color-picker" class="sr-only">Custom color picker</label>
+              <input type="color" id="custom-color-picker" value="#000000" aria-label="Choose custom color" title="Custom color">
+              <span class="custom-label" aria-hidden="true">+</span>
+            </div>
+          </fieldset>
+        </div>
+        
+        <div class="toolbar-group utility-group">
+          <fieldset class="utility-group">
+            <legend class="sr-only">Utilities</legend>
+            <button onclick="mathBoard.save()" class="action-btn secondary" aria-label="Save drawing" title="Save drawing (Ctrl+S)">
+              <span class="tool-icon" aria-hidden="true">💾</span>
+              <span class="sr-only">Save</span>
+            </button>
+            <button onclick="mathBoard.toggleGrid()" id="grid-btn" class="action-btn secondary" aria-label="Toggle grid overlay" title="Toggle grid (G)">
+              <span class="tool-icon" aria-hidden="true">⊞</span>
+              <span class="sr-only">Grid</span>
+            </button>
+          </fieldset>
+        </div>
+      </section>
+      
+      <!-- Footer Information -->
+      <footer class="toolbar-footer" role="contentinfo">
+        <span class="app-info">
+          <span class="app-title">Math Board v2.0</span>
+        </span>
+        <span class="author-info">
+          <span class="author-credit">© 2025 Rafał Widło</span>
+        </span>
+      </footer>
+    </nav>
+  </main>
 </body>
 
 </html>
