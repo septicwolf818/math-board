@@ -175,7 +175,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Rafał Widło**
 - GitHub: [@septicwolf818](https://github.com/septicwolf818)
-- Email: [Your Email]
+- Email: [rafal.widlo@gmail.com](mailto:rafal.widlo@gmail.com)
 
 ## 🔄 Version History
 
@@ -196,8 +196,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 Future enhancements planned:
 - [ ] Text tool for annotations
 - [ ] Mathematical equation editor
-- [ ] Cloud sync capabilities
-- [ ] Collaborative drawing
 - [ ] More geometric shapes
 - [ ] Layer management
 - [ ] Custom brush patterns
