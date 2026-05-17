@@ -66,6 +66,9 @@ class MathBoard {
         
         canvas.elt.style.touchAction = 'none';
         
+        // Prevent context menu on right-click
+        canvas.elt.addEventListener('contextmenu', (e) => e.preventDefault());
+        
         // Store canvas bounds
         this.canvasBounds = { 
           width: canvasWidth, 
@@ -156,6 +159,7 @@ class MathBoard {
       sketch.mouseClicked = function() { 
         return this.handleMouseClicked(sketch); 
       }.bind(this);
+
       sketch.mouseMoved = function() {
         return false;
       }.bind(this);
@@ -282,7 +286,19 @@ class MathBoard {
   }
 
   handleMousePressed(sketch) {
+    console.log('mousePressed, button:', sketch.mouseButton, 'isInCanvas:', this.isInCanvas(sketch));
     if (!this.isInCanvas(sketch)) return;
+
+    if (sketch.mouseButton.right) {
+      console.log('Right click detected, isSelectingSecondPoint:', this.isSelectingSecondPoint, 'mode:', this.mode);
+      if (this.isSelectingSecondPoint && (this.mode === 'line' || this.mode === 'rectangle' || this.mode === 'circle')) {
+        this.isSelectingSecondPoint = false;
+        this.tempShapeStart = { x: -1, y: -1 };
+        this.previewLayer.clear();
+        console.log('Shape preview cancelled');
+      }
+      return;
+    }
 
     if (this.mode === 'draw' || this.mode === 'eraser') {
       this.isDrawing = true;
